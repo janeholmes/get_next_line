@@ -1,4 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yalechin <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 14:51:19 by yalechin          #+#    #+#             */
+/*   Updated: 2024/02/18 14:51:21 by yalechin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	unsigned char	*ptr;
+	size_t			x;
+	size_t			s;
+
+	s = nmemb * size;
+	if ((nmemb && size) && nmemb > ((size_t)-1) / size)
+		return (NULL);
+	x = 0;
+	ptr = (unsigned char *)malloc(s);
+	if (!ptr)
+		return (NULL);
+	while (x < (s))
+	{
+		ptr[x++] = 0;
+	}
+	return (ptr);
+}
 
 char	*ft_strchr(const char *s, int c)
 {
@@ -17,7 +49,6 @@ char	*ft_strchr(const char *s, int c)
 		return ((char *)s + x);
 	return (NULL);
 }
-
 
 size_t	ft_strlen(const char *s)
 {
@@ -50,6 +81,26 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		ptr[x] = s2[y];
 		x++;
 		y++;
+	}
+	ptr[x] = '\0';
+	return (ptr);
+}
+
+char	*ft_strdup(const char *s)
+{
+	char	*ptr;
+	int		x;
+	int		len;
+
+	len = ft_strlen(s);
+	ptr = (char *)malloc((len + 1));
+	if (!ptr)
+		return (NULL);
+	x = 0;
+	while (s[x])
+	{
+		ptr[x] = s[x];
+		x++;
 	}
 	ptr[x] = '\0';
 	return (ptr);

@@ -1,116 +1,114 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yalechin <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 14:51:31 by yalechin          #+#    #+#             */
+/*   Updated: 2024/02/18 14:51:34 by yalechin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-char *ft_rewrite(char *buffer, char *temp)
+char	*ft_rewrite(char *buffer, char *temp)
 {
-    char *hold;
+	char	*hold;
 
-    hold = ft_strjoin(buffer, temp);
-    free(buffer);
-    buffer = hold; 
-    return (buffer); 
-
-
+	hold = ft_strjoin(buffer, temp);
+	free(buffer);
+	return (hold);
 }
 
-char *ft_read_line(char *buffer)
+char	*ft_clean_line(char *buffer)
 {
-    char *line;
-    int x; 
-    int y; 
+	int		x;
+	char	*line;
 
-    x = 0; 
-    y = 0;
-
-    //printf("Start of read line, buffer is %s", buffer);
-
-    if(!buffer[0])
-        return (NULL);
-
-    while(buffer[x] != '\n')
-        x++;
-    //printf("x is %d", x);
-    line = malloc(x+2);
-    if(!line)
-        return (NULL);
-    while (y < x)
-    {
-        line[y] = buffer[y]; 
-        y++; 
-    }
-    if(buffer[y] == '\n')
-        line[y++] = '\n';
-    line[y] = '\0';
-    //printf("in the end of read line, line is %s", line);
-    return (line);
-
-}
-char *read_from_file(char* buffer, int fd)
-{
-    int nb; 
-    char *temp; 
-
-    nb = 1; 
-    if (fd == -1)
-        return (NULL); 
-
-    temp = (char *)malloc(BUFFER_SIZE+1);
-    if (!temp)
-        return (NULL);
-
-    while (nb > 0)
-    {
-        nb = read(fd, temp, BUFFER_SIZE);
-        if (nb <= 0)
-        {
-            free(temp);
-            free(buffer);
-            return (NULL); 
-        }
-        //printf("%s", buffer);
-        temp[nb] = '\0';
-        buffer = ft_rewrite(buffer, temp);
-        if(ft_strchr(temp, '\n'))
-            break ; 
-    }
-    //printf("In the end of read from file, buffer is %s", buffer);
-    free(temp);
-    return (buffer);
-
+	x = 0;
+	if (!buffer)
+		return (NULL);
+	while (buffer[x] && buffer[x] != '\n')
+		x++;
+	if (buffer[x] == '\0')
+	{
+		free(buffer);
+		return (NULL);
+	}
+	x++;
+	line = ft_strdup(&buffer[x]);
+	free(buffer);
+	return (line);
 }
 
-char *get_next_line(int fd)
+char	*ft_read_line(char *buffer)
 {
-    static char *buffer; 
-    char *line; 
+	char	*line;
+	int		x;
+	int		y;
 
-    if (fd == -1)
-        return (NULL); 
-    
-    buffer = (char *)malloc(BUFFER_SIZE+1);
-    if (!buffer)
-        return (NULL); 
-    
-    if (!(ft_strchr(buffer, '\n')))
-        buffer = read_from_file(buffer, fd);
-    //printf("%s", buffer); 
-    line = ft_read_line(buffer);
-    
-    return (line);
+	x = 0;
+	y = 0;
+	if (!buffer[0])
+		return (NULL);
+	while (buffer[x] && buffer[x] != '\n')
+		x++;
+	line = malloc(x + 2);
+	if (!line)
+		return (NULL);
+	while (x > y)
+	{
+		line[y] = buffer[y];
+		y++;
+	}
+	if (buffer[y] && buffer[y] == '\n')
+		line[y++] = '\n';
+	line[y] = '\0';
+	return (line);
 }
 
-
-int main (void)
+char	*read_from_file(char *str, int fd)
 {
-   int fd = open("text.txt", O_RDONLY);
-   char *line;
-   
-   while ((line = get_next_line(fd)) != NULL)
-   {
-        printf("%s", line); 
-        free(line); 
-   } 
-   
-   close(fd); 
-   return (0); 
+	int		nb;
+	char	*temp;
+
+	if (!str)
+		str = ft_calloc(1, sizeof(char));
+	nb = 1;
+	temp = (char *)malloc(BUFFER_SIZE + 1);
+	if (!temp || !str)
+		return (NULL);
+	while (nb > 0)
+	{
+		nb = read(fd, temp, BUFFER_SIZE);
+		if (nb < 0)
+		{
+			free(temp);
+			free(str);
+			return (NULL);
+		}
+		temp[nb] = '\0';
+		str = ft_rewrite(str, temp);
+		if (ft_strchr(temp, '\n'))
+			break ;
+	}
+	free(temp);
+	return (str);
 }
 
+char	*get_next_line(int fd)
+{
+	static char	*buffer;
+	char		*line;
+
+	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, 0, 0) < 0)
+		return (NULL);
+	if (!buffer || !ft_strchr(buffer, '\n'))
+		buffer = read_from_file(buffer, fd);
+	if (!buffer)
+		return (NULL);
+	line = ft_read_line(buffer);
+	buffer = ft_clean_line(buffer);
+	return (line);
+}
