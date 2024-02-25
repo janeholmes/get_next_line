@@ -90,7 +90,7 @@ char	*read_from_file(char *str, int fd)
 		}
 		temp[nb] = '\0';
 		str = ft_rewrite(str, temp);
-		if (ft_strchr(temp, '\n'))
+		if (ft_strchr(temp, '\n') || !str)
 			break ;
 	}
 	free(temp);
@@ -102,7 +102,7 @@ char	*get_next_line(int fd)
 	static char	*buffer;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!buffer || !ft_strchr(buffer, '\n'))
 		buffer = read_from_file(buffer, fd);

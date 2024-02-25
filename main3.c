@@ -8,11 +8,11 @@ int	main(void)
 	char *line;
 	int x;
 
-	fd1 = open("text.txt", O_RDONLY);
-	fd2 = open("text2.txt", O_RDONLY);
-	fd3 = open("text3.txt", O_RDONLY);
+	fd1 = open("text2.txt", O_RDONLY);
+	fd2 = open("text.txt", O_RDONLY);
+	fd3 = open("text5.txt", O_RDONLY);
 	x = 3;
-	while (x > 0)
+	/*while (x > 0)
 	{
 		line = get_next_line(fd1);
 		printf("%s", line);
@@ -24,7 +24,17 @@ int	main(void)
 		printf("%s", line);
 		free(line);
 		x--;
-	}
+	}*/
+
+	line = get_next_line(fd1);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(fd2);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(fd3);
+	printf("%s", line);
+	free(line);
 
 	close(fd1);
 	close(fd2);
